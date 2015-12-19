@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">EverydayLifeLogger</string>
+    <string name="title_activity_view_list">ViewList</string>
+</resources>
