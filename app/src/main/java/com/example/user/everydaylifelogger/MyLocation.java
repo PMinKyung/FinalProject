@@ -1,8 +1,6 @@
 package com.example.user.everydaylifelogger;
 
-/**
- * Created by user on 2015-12-19.
- */
+
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;

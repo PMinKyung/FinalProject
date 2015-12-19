@@ -43,6 +43,7 @@ public class MainActivity extends Activity {
     Button mBtList;
     EditText mEtInput;
     CheckBox checkBox;
+    //일어난 사건의 카테고리를 공부와 공부가 아닌것으로 나누었고, 사건의 변수를 event라는 전역변수로 두었다.
     String study = "not study";
     String event = "not null";
 
@@ -57,6 +58,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //데이터베이스 생성
         db = openOrCreateDatabase(dbInput,dbMode,null);
         createTable();
 
@@ -66,8 +68,10 @@ public class MainActivity extends Activity {
         checkBox = (CheckBox) findViewById(R.id.cb_study);
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
+        //공부인지 아닌지의 여부를 checkbox의 check여부로 구분한다.
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
+            //checkbox에 체크가 되었거나 취소하였을때 토스트메세지를 통해서 알림을 띄운다.
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(buttonView.getId() == R.id.cb_study){
 
@@ -88,9 +92,9 @@ public class MainActivity extends Activity {
                 .findFragmentById(R.id.map);
         map = mapFragment.getMap();
 
-        //현재 위치로 가는 버튼 표시
+        //현재 위치로 가는 버튼을 표시한다
         map.setMyLocationEnabled(true);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom( SEOUL, 15));//초기 위치...수정필요
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom( SEOUL, 15));
 
         MyLocation.LocationResult locationResult = new MyLocation.LocationResult() {
             @Override
@@ -106,6 +110,7 @@ public class MainActivity extends Activity {
         MyLocation myLocation = new MyLocation();
         myLocation.getLocation(getApplicationContext(), locationResult);
 
+        //Save버튼을 누른경우, EditText를 통해 사용자로 부터 사건을 입력받아서 db에 저장한다.
         mBtSave.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 event = mEtInput.getText().toString();
@@ -115,18 +120,16 @@ public class MainActivity extends Activity {
 
         });
 
+        //View List버튼을 누른경우, 창을 전환하여 사용자가 입력한 사건을 공부와 공부가 아닌 사건으로 구분하여 나열한다.
         mBtList.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 Intent intent = new Intent(MainActivity.this, ViewList.class);
                 startActivity(intent);
-
             }
-
         });
-
-
     }
 
+    //테이블생성
     public void createTable() {
         try {
             String sql = "create table " + tableInput + "(id integer primary key autoincrement, " + "study text, event text )";
@@ -136,6 +139,7 @@ public class MainActivity extends Activity {
         }
     }
 
+    //데이터 추가
     public void insertData() {
         String sql = "insert into " + tableInput + " values(NULL, '" + study + "', '" + event + "');";
         db.execSQL(sql);
@@ -148,7 +152,7 @@ public class MainActivity extends Activity {
         map.clear();
         LatLng currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
 
-        //currentPosition 위치로 카메라 중심을 옮기고 화면 줌을 조정한다. 줌범위는 2~21, 숫자클수록 확대
+        //currentPosition 위치로 카메라 중심을 옮기고 화면 줌을 조정한다.
         map.moveCamera(CameraUpdateFactory.newLatLngZoom( currentPosition, 17));
         map.animateCamera(CameraUpdateFactory.zoomTo(17), 2000, null);
 
